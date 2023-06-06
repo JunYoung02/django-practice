@@ -2,6 +2,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from todo.models import TodoList
 
 # Create your views here.
+def complete_todo(request, pk):
+    comTodo = get_object_or_404(TodoList, pk=pk)
+    comTodo.complete = True
+    comTodo.save()
+    return redirect('toods')
+
 def delete_todo(request, pk):
 	delTodo = get_object_or_404(TodoList, pk=pk)
 	delTodo.delete()
