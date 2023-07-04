@@ -1,5 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from todo.models import TodoList
+from django.views.generic import CreateView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 def complete_todo(request, pk):
@@ -30,20 +32,27 @@ def update_todo(request, pk):
 		},
 	)
  
-def create_todo(request):
-	myTodo = TodoList()
-	if request.method == 'POST':
-		myTodo.todo = request.POST['todo']
-		myTodo.description = request.POST['description']
-		myTodo.important = request.POST.get('important') == "on"
-		myTodo.complete = request.POST.get('complete') == "on"
-		myTodo.save()
-		return redirect('todos')
-	return render(
-		request,
-		'todo/todo_create.html'
-	)
+# def create_todo(request):
+# 	myTodo = TodoList()
+# 	if request.method == 'POST':
+# 		myTodo.todo = request.POST['todo']
+# 		myTodo.description = request.POST['description']
+# 		myTodo.important = request.POST.get('important') == "on"
+# 		myTodo.complete = request.POST.get('complete') == "on"
+# 		myTodo.save()
+# 		return redirect('todos')
+# 	return render(
+# 		request,
+# 		'todo/todo_create.html'
+# 	)
 
+class TodoCreate(LoginRequiredMixin, CreateView):
+    model = TodoList
+    fields = ['todo', 'description', 'important']
+    login_url = '/accounts/signin/'
+    template_name = 'todo/todo_create.html'  # 템플릿 파일 이름 변경
+    
+    
 def todos(request):
 	todolist = TodoList.objects.all()
 	return render(
